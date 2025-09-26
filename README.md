@@ -4,4 +4,4 @@ This python code enables to compute the GSIF from .vtk files obtained from the D
 
 ## 📦 Exemple
 
-Copy the exemple after having imported the librairies and functions. You have to download the images and .vtk files (Example_Github.zip) from the experiments to run the exemple.
+Run the example.py after having imported the librairies and functions. You have to download the images and .vtk files (Example_Github.zip) from the experiments and actualize the data's directory into the example.py code (your_path).
