@@ -1,37 +1,41 @@
 #%%% Vizualisation of a contour used to compute the GSIF in order to set its size
+import os
+from Libraries_and_functions import *
 
-# your_path = where you have donwloaded the image and .vtk files
+# required library: pyvista
+
+your_path = 'ENTER_YOUR_PATH' #where you have donwloaded the image and .vtk files
+os.chdir(your_path)
 
 DIC_file = r'T3_80px'
 img_file = r'Good_tif0000'
 
 file = your_path+'\Example_Github\VTK\\T3_80px-000001.vtk'
 ref_image = your_path+'\Example_Github\images\\Example00.tif'
-center_x = 1535 #x location of the V-notch tip
-center_y = 1507 #y location of the V-notch tip
+center_x  = 1535 #x location of the V-notch tip
+center_y  = 1507 #y location of the V-notch tip
 nb_points = 200 #number of calculation points along the contour
-radius = 700 #px
+radius    = 700 #px
 
 show_image_ref_and_fields(file,ref_image,"Uy_no_rbm",center_x,center_y,radius,nb_points)
-
 #%%% Determination of KI and KII on arcan tests
 
 # to be adapted :
 DIC_file = r'T3_80px'
-nb_img = 19 #img number just before failure
-center_x = 1535 #x location of the V-notch tip
-center_y = 1507 #y location of the V-notch tip
-rota = 1.604 #rotation of the coordinate system of the DIC in radians
+nb_img   = 19    #img number just before failure
+center_x = 1535  #x location of the V-notch tip
+center_y = 1507  #y location of the V-notch tip
+rota     = 1.604 #rotation of the coordinate system of the DIC in radians
 
-scale = 0.01 #mm/px
-beta = 30. #angle of the V-notch in degrees
-E = 3040. #Young's modulus of the material
-nu = 0.4 #Poisson's ratio of the material
-contour_size_min = 300 #minimum radius of a contour in px
+scale = 0.01  #mm/px
+beta  = 30.   #angle of the V-notch in degrees
+E     = 3040. #Young's modulus of the material
+nu    = 0.4   #Poisson's ratio of the material
+contour_size_min = 300                  #minimum radius of a contour in px
 contour_size_max = contour_size_min+400 #maximum radius of a contour in px
-nb_contours = 30 #nb of contours
-nb_points = 200 #nb of calculation points along the contour
-img_step = int(nb_img/10) #step of calculation/images
+nb_contours      = 30                   #nb of contours
+nb_points        = 200                  #nb of calculation points along the contour
+img_step         = int(nb_img/10)       #step of calculation/images
 
 K1_essai, K2_essai, mixity = [],[],[]
 K1_up, K1_down = [],[]
