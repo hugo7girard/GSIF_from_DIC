@@ -1,0 +1,89 @@
+#%%% Vizualisation of a contour used to compute the GSIF in order to set its size
+
+# your_path = where you have donwloaded the image and .vtk files
+
+DIC_file = r'T3_80px'
+img_file = r'Good_tif0000'
+
+file = your_path+'\Example_Github\VTK\\T3_80px-000001.vtk'
+ref_image = your_path+'\Example_Github\images\\Example00.tif'
+center_x = 1535 #x location of the V-notch tip
+center_y = 1507 #y location of the V-notch tip
+nb_points = 200 #number of points along the contour
+radius = 700 #px
+
+show_image_ref_and_fields(file,ref_image,"Uy_no_rbm",center_x,center_y,radius,nb_points)
+
+#%%% Determination of KI and KII on arcan tests
+
+# to be adapted :
+DIC_file = r'T3_80px'
+nb_img = 19 #img number just before failure
+center_x = 1535 #x location of the V-notch tip
+center_y = 1507 #y location of the V-notch tip
+rota = 1.604 #rotation of the coordinate system of the DIC in radians
+
+scale = 0.01 #mm/px
+beta = 30. #angle of the V-notch in degrees
+E = 3040. #Young's modulus of the material
+nu = 0.4 #Poisson's ratio of the material
+contour_size_min = 300 #minimum radius of a contour in px
+contour_size_max = contour_size_min+400 #maximum radius of a contour in px
+nb_contours = 30 #nb of contours
+nb_points = 200 #nb of calculation points along the contour
+img_step = int(nb_img/10) #step of calculation/images
+
+K1_essai, K2_essai, mixity = [],[],[]
+K1_up, K1_down = [],[]
+K2_up, K2_down = [],[]
+mixity_up, mixity_down = [],[]
+img = [i for i in range(1,nb_img,img_step)]
+
+for ff in [f"{i:06d}" for i in range(1,nb_img,img_step)]: 
+    file = your_path+'\Example_Github\VTK\\'+DIC_file+'-'+ff+'.vtk'
+
+    k1_list, k2_list = [],[]
+    for rr in np.linspace(contour_size_min,contour_size_max,nb_contours):
+        
+        K1,K2 = compute_K1K2(file,rr,center_x,center_y,nb_points,scale,beta,E,nu,rota)
+        
+        k1_list.append(K1)
+        k2_list.append(K2)
+    
+    K1_essai.append(np.mean(k1_list))
+    K2_essai.append(np.mean(k2_list))
+    mixity.append(abs(np.mean(k2_list))/abs(np.mean(k1_list)))
+    std_mixity = (abs(np.mean(k2_list))/abs(np.mean(k1_list)))*(((np.std(k2_list)/np.mean(k2_list))**2+(np.std(k1_list)/np.mean(k1_list))**2))**0.5
+    mixity_up.append((abs(np.mean(k2_list))/abs(np.mean(k1_list)))+std_mixity)
+    mixity_down.append((abs(np.mean(k2_list))/abs(np.mean(k1_list)))-std_mixity)
+    K1_up.append(np.mean(k1_list)+np.std(k1_list))
+    K1_down.append(np.mean(k1_list)-np.std(k1_list))
+    K2_up.append(np.mean(k2_list)+np.std(k2_list))
+    K2_down.append(np.mean(k2_list)-np.std(k2_list))
+
+plt.figure(1)
+plt.plot(img,K1_essai,'-',label=r'KI')    
+plt.fill_between(img, K1_down, K1_up, alpha=0.3) #color='blue'
+
+plt.xlabel('img [-]')
+plt.ylabel(r'$K_\mathrm{I}$ [MPa.mm$^{\lambda_\mathrm{I}-1}$]')
+plt.title('Mode I GSIF')
+plt.legend()        
+
+plt.figure(2)
+plt.plot(img,K2_essai,'-',label=r'KII')    
+plt.fill_between(img, K2_down, K2_up, alpha=0.3) #color='red'
+
+plt.xlabel('img [-]')
+plt.ylabel(r'$K_\mathrm{II}$ [MPa.mm$^{\lambda_\mathrm{II}-1}$]')
+plt.title('Mode II GSIF')
+plt.legend()
+
+plt.figure(3)
+plt.plot(img,mixity,'-',label=r'Mixity')    
+plt.fill_between(img, mixity_down, mixity_up, alpha=0.3) #color='red'
+
+plt.xlabel('img [-]')
+plt.ylabel(r'$K_\mathrm{II}/K_\mathrm{I}$ [mm$^{\lambda-\lambda}$]')
+plt.title('Mode mixity')
+plt.legend()
