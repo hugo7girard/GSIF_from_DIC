@@ -9,7 +9,7 @@ file = your_path+'\Example_Github\VTK\\T3_80px-000001.vtk'
 ref_image = your_path+'\Example_Github\images\\Example00.tif'
 center_x = 1535 #x location of the V-notch tip
 center_y = 1507 #y location of the V-notch tip
-nb_points = 200 #number of points along the contour
+nb_points = 200 #number of calculation points along the contour
 radius = 700 #px
 
 show_image_ref_and_fields(file,ref_image,"Uy_no_rbm",center_x,center_y,radius,nb_points)
